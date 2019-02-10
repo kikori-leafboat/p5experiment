@@ -1,5 +1,6 @@
 let boids = [100];
 let foods = new Array();
+let qtree;
 
 function setup() {
   createCanvas(600, 600);
@@ -18,6 +19,7 @@ function seperation(current){
     // END PROCEDURE
     let steer = createVector(0, 0);
     let count = 0;
+
     for (let b of boids) {
         if(b != current) {
             if (b.location.dist(current.location) < 20 + b.r) {
@@ -38,7 +40,11 @@ function seperation(current){
 function cohesion(current){
 
     let steer = createVector(0, 0);
-    for (let b of boids) {
+
+    let range = new Circle(current.x, current.y, current.r * 2);
+    let founded = qtree.query(range);
+
+    for (let b of founded) {
         if(b != current) {
             steer.add(b.position);
         }
@@ -51,8 +57,9 @@ function cohesion(current){
 
 function alignment(current){
     let steer = createVector(0, 0);
-    let count = 0;
-    for (let b of boids) {
+    let range = new Circle(current.x, current.y, current.r * 2);
+    let founded = qtree.query(range);
+    for (let b of founded) {
         if(b != current) {
             steer.add(b.velocity);
         }
@@ -71,21 +78,28 @@ function draw() {
     }
 
     let velocity = createVector(0, 0);
+    
+    let boundary = new Rectangle(300, 300, 300, 300);
+    qtree = new QuadTree(boundary, 4);
 
     for (let b of boids) {
+
+        let point = new Point(b.x, b.y, b);
+        qtree.insert(point);
+
         let alignment = this.alignment(b);
         alignment.normalize();
-        alignment.mult(0.5);
+        alignment.mult(0.7);
         b.velocity.add(alignment);
 
         let seperation = this.seperation(b);
         seperation.normalize();
-        seperation.mult(1);
+        seperation.mult(1.2);
         b.velocity.add(seperation);
 
         let cohesion = this.cohesion(b);
         cohesion.normalize();
-        cohesion.mult(0.9);
+        cohesion.mult(0.8);
         b.velocity.add(cohesion);
 
         if (b.target != undefined) {
@@ -128,7 +142,7 @@ function draw() {
             b.location.y = 0;
             b.velocity.add(createVector(0, 3));
         }
-        b.velocity.limit((b.velocityLimit + map(noise(0, 0), 0, 1, 0.1,  map(b.size, 5, 20, 10, 5)))/1.8);
+        b.velocity.limit((b.velocityLimit + map(noise(0, 0), 0, 1, 0.1,  map(b.size, 5, 20, 10, 5))));
         
         b.location.add(b.velocity);
         textSize(b.size);
@@ -139,6 +153,13 @@ function draw() {
             f.location.add(createVector(0, 0.008));
             if(p5.Vector.dist(f.location, b.location) - f.size - b.r < 1) {
                 f.size -= 0.1;
+                if (b.size < 30) {
+                    b.size += 0.05;
+                    b.r += 0.005;
+                } else {
+                    b.size += 0.01;
+                    b.r += 0.001;
+                }
             };
 
             if(f.size < 0.1) {
