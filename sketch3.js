@@ -75,25 +75,30 @@ function draw() {
     for (let b of boids) {
         let alignment = this.alignment(b);
         alignment.normalize();
-        alignment.mult(0.8);
+        alignment.mult(0.5);
         b.velocity.add(alignment);
 
         let seperation = this.seperation(b);
         seperation.normalize();
-        seperation.mult(2);
+        seperation.mult(1);
         b.velocity.add(seperation);
 
         let cohesion = this.cohesion(b);
         cohesion.normalize();
-        cohesion.mult(1.01);
+        cohesion.mult(0.9);
         b.velocity.add(cohesion);
 
+        if (b.target != undefined) {
+            let userInteractionDirection = p5.Vector.sub(b.target.location, b.location);
+            userInteractionDirection.normalize();
+            userInteractionDirection.mult(0.5);
+            b.velocity.add(userInteractionDirection);
 
-        if (foods.length > 0) {
+        }else if (foods.length > 0) {
             let target = foods[ceil(random(0, foods.length-1))].location;
             let userInteractionDirection = p5.Vector.sub(target, b.location);
             userInteractionDirection.normalize();
-            userInteractionDirection.mult(0.8);
+            userInteractionDirection.mult(0.5);
             b.velocity.add(userInteractionDirection);
             
         } else {

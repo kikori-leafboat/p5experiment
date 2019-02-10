@@ -23,6 +23,7 @@ class Boid {
         this.r = map(this.size, 5, 20, 3, 5);
         // this.velocityLimit = random(0.1, map(size, 5, 20, 4, 0.5));
         this.velocityLimit = random(0.1, map(this.size, 5, 20, 6, 8));
+        this.target = undefined;
     }
 
     render() {
