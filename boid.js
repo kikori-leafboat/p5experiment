@@ -4,8 +4,8 @@ class Food {
         this.size = size;
     }
     render() {
-        stroke(255, 242, 128);
-        fill(255, 242, 128);
+        noStroke();
+        fill(54, 50, 100);
         ellipse(this.location.x, this.location.y, this.size);
     }
 }
@@ -13,7 +13,7 @@ class Food {
 class Boid {
     constructor(x, y, size) {
         this.location = createVector(x, y);
-        this.velocity = createVector(x, y);
+        this.accelaration = createVector(x, y);
         this.angle = 0;
         if (size) {
             this.size = size;
@@ -21,17 +21,37 @@ class Boid {
             this.size = random(8, 15);
         }
         this.r = map(this.size, 5, 20, 3, 5);
-        // this.velocityLimit = random(0.1, map(size, 5, 20, 4, 0.5));
-        this.velocityLimit = random(0.1, map(this.size, 5, 20, 4, 7));
+        this.accelarationLimit = random(0.1, map(this.size, 5, 20, 1, 2));
         this.target = undefined;
         if (size % 3 == 1) {
-            this.color = createVector(167, 184, 196);
+            this.color = createVector(197, 5, 95);
         } else {
-            this.color = createVector(222, 240, 247);
+            this.color = createVector(197, 10, 97);
         }
     }
 
+    addAccelaration(velocity, weight = 1) {
+        if (!velocity)
+            return;
+
+        velocity.normalize();
+        velocity.mult(weight);
+        this.accelaration.add(velocity);
+    }
+
+    move() {
+        // the smaller, the faster
+        let randomAccelaration = map(noise(0, 0), 0, 1, 0.1, map(this.size, 
+            config.boid.size.min, config.boid.size.max,
+            config.boid.accelaration.max, config.boid.accelaration.min));
+
+        this.accelaration.limit(this.accelarationLimit + randomAccelaration);
+        this.location.add(this.accelaration);
+
+    }
+
     render() {
+        textSize(this.size);
         fill(this.color.x, this.color.y, this.color.z);
         noStroke();
         //let radian = -atan2(location.x - trianglePosition.x, location.y - trianglePosition.y)
