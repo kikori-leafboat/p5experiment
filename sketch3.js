@@ -122,7 +122,7 @@ function paintBackground() {
 }
 
 function handleUserInteraction() {
-    if (mouseIsPressed){
+    if (mouseIsPressed && frameCount % 15 == 0){
         foods.push(new Food(mouseX, mouseY, 5));
     }
 }
