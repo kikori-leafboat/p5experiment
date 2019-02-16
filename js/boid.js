@@ -53,7 +53,7 @@ class Boid {
     }
 
     render() {
-        textSize(this.size - this.z/10);
+        textSize(this.size - this.z/40);
         fill(this.color.x, this.color.y, this.color.z - this.z);
         noStroke();
         //let radian = -atan2(location.x - trianglePosition.x, location.y - trianglePosition.y)
