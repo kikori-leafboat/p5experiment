@@ -47,7 +47,7 @@ class Boid {
             config.boid.size.min, config.boid.size.max,
             config.boid.accelaration.max, config.boid.accelaration.min));
 
-        this.accelaration.limit(this.accelarationLimit + randomAccelaration + map(this.z, -100, +100, 3, -3));
+        this.accelaration.limit(this.accelarationLimit + randomAccelaration + map(this.z, -100, +100, 3, -2) - map(this.size, 1, 50, 0, 1));
         this.location.add(this.accelaration);
         this.z += sin(frameCount - noise(this.location.x, this.location.y)) + random(-1, 1) * noise(this.location.x, this.location.y);
     }
