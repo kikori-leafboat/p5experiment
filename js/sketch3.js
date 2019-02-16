@@ -42,7 +42,7 @@ let config = {
         }
     },
     boid: {
-        number: 100,
+        number: 50,
         seperationDist: 10,
         alignmentDampingNum: 8,
         movementWeight: {
