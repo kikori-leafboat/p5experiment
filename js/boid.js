@@ -1,3 +1,12 @@
+/**
+ * yu no suisou
+ *
+ * @copyright: (C) 2019 kikori-leafboat, All Rights Reserved.
+ * @author:    kikori-leafboat https://kikori-leafboat.github.io/
+ * @version:   1.0.0
+ *
+ */
+
 class Food {
     constructor(x, y, size) {
         this.location = createVector(x, y);
@@ -19,7 +28,7 @@ class Boid {
         if (size) {
             this.size = size;
         } else {
-            this.size = random(8, 15);
+            this.size = random(8, 25);
         }
         this.r = map(this.size, 5, 20, 3, 5);
         this.accelarationLimit = random(0.1, map(this.size, 5, 20, 1, 2));
@@ -58,7 +67,7 @@ class Boid {
         noStroke();
         //let radian = -atan2(location.x - trianglePosition.x, location.y - trianglePosition.y)
         // let radian = -atan2(location.x - trianglePosition.x, location.y - trianglePosition.y)
-        text("ゆ", this.location.x, this.location.y);
+        text(config.boidText, this.location.x, this.location.y);
         // ellipse(this.location.x, this.location.y, this.r);
     }
 }

@@ -1,4 +1,21 @@
+/**
+ * yu no suisou
+ *
+ * @copyright: (C) 2019 kikori-leafboat, All Rights Reserved.
+ * @author:    kikori-leafboat https://kikori-leafboat.github.io/
+ * @version:   1.0.0
+ *
+ */
+document.querySelector("#i-char").addEventListener('change', (event) => {
+   if (event.target.value) {
+        config.boidText = event.target.value;
+   } else {
+        config.boidText = "ゆ";
+   }
+});
+
 let config = {
+    boidText: "ゆ",
     frameRate: 30,
     fontName: "Hannari",
     gravity: 0.008,
@@ -16,7 +33,7 @@ let config = {
         foreground: {
             h:197,
             s: 5,
-            b: 95
+            b: 99
         },
         food: {
             h: 54,
@@ -36,7 +53,7 @@ let config = {
         },
         size: {
             min: 20,
-            max: 30
+            max: 50
         },
         accelaration: {
             min: 2,
