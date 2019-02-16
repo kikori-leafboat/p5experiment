@@ -191,7 +191,7 @@ function draw() {
         qtree.insert(point);
     }
 
-    qtree.show();
+    // qtree.show();
 
     for (let i = 0; i < boids.length; i++) {
         let b = boids[i];
