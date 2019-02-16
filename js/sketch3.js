@@ -25,13 +25,13 @@ let config = {
         }
     },
     boid: {
-        number: 80,
+        number: 40,
         seperationDist: 10,
         alignmentDampingNum: 8,
         movementWeight: {
             alignment: 0.7,
-            seperation: 1.2,
-            cohesion: 0.9,
+            seperation: 1,
+            cohesion: 0.8,
             disire: 0.9
         },
         size: {
@@ -55,8 +55,18 @@ function setup() {
   frameRate(config.frameRate);
   textFont(config.fontName);
 
-  for(let i = 0; i < config.boid.number; i++) {
+  let currentBoss = new Boid(random(width), random(height));
+  boids[0] = currentBoss;
+  for(let i = 1; i < config.boid.number; i++) {
     boids[i] = new Boid(random(width), random(height));
+    // if(i % 9 == 0) {
+    //     currentBoss = boids[i];
+    //     boids[i].target = currentBoss.location;
+    // } else {
+    //     boids[i].boss = currentBoss;
+    //     boids[i].target = currentBoss.location;
+    // }
+
     if(i % 8 == 0) {
         boids[i] = new Boid(random(width), random(height), random(15, 20));
     }
@@ -67,7 +77,11 @@ function seperation(current){
     let steer = createVector(0, 0);
     let count = 0;
 
-    for (let b of boids) {
+    // for (let b of boids) {
+    let range = new Circle(current.x, current.y, current.r * 5);
+    let founded = qtree.query(range);
+
+    for (let b of founded) {
         if(b != current) {
             if (b.location.dist(current.location) < config.boid.seperationDist + b.r * 2) {
                 let direction = p5.Vector.sub(current.location, b.location);
@@ -88,7 +102,7 @@ function cohesion(current){
 
     let steer = createVector(0, 0);
 
-    let range = new Circle(current.x, current.y, current.r * 2);
+    let range = new Circle(current.x, current.y, current.r * 5);
     let founded = qtree.query(range);
 
     for (let b of founded) {
@@ -104,7 +118,7 @@ function cohesion(current){
 
 function alignment(current){
     let steer = createVector(0, 0);
-    let range = new Circle(current.x, current.y, current.r * 2);
+    let range = new Circle(current.x, current.y, current.r * 5);
     let founded = qtree.query(range);
     for (let b of founded) {
         if(b != current) {
@@ -122,45 +136,79 @@ function paintBackground() {
 }
 
 function handleUserInteraction() {
-    if (mouseIsPressed && frameCount % 15 == 0){
+    if (mouseIsPressed && foods.length < 30){
         foods.push(new Food(mouseX, mouseY, 5));
     }
 }
 
 function initializeQuadTree() {
-    let boundary = new Rectangle(300, 300, 300, 300);
+    // x, y, w, h
+    let boundary = new Rectangle(width/2, height/2, width/2, height/2);
     qtree = new QuadTree(boundary, 4);
+}
+
+function gradation(h, s, b, size) {
+    fill(h, s, b, 0.3);
+    rect(0, 0, width, size);
+    rect(0, height - size, width, size);
+    rect(0, 0, size, height);
+    rect(width - size, 0, size, height);
 }
 
 function draw() {
     this.handleUserInteraction();
     this.paintBackground();
     this.initializeQuadTree();
-
-    let target = undefined;
-    if (foods.length > 0) {
-        target = foods[ceil(random(0, foods.length-1))].location;
-    } else {
-        target = createVector(random(0, width),random(0, height));
-    }
+    
+    // rect(height - 20, 20, width, 20);
+    
+    let randomTarget = [
+        createVector(random(0, width/2),random(0, height/2))
+        ,createVector(random(width/2, width),random(height/2, height))
+        ,createVector(random(width/2, width),random(0, height/2))
+        ,createVector(random(0, width/2),random(height/2, height))];
 
     for (let b of boids) {
-
         // store each position in quad tree
-        let point = new Point(b.x, b.y, b);
+        let point = new Point(b.location.x, b.location.y, b);
         qtree.insert(point);
+    }
+
+    // qtree.show();
+
+    for (let i = 0; i < boids.length; i++) {
+        let b = boids[i];
 
         b.addAccelaration(this.alignment(b), config.boid.movementWeight.alignment);
         b.addAccelaration(this.seperation(b), config.boid.movementWeight.seperation);
         b.addAccelaration(this.cohesion(b), config.boid.movementWeight.cohesion);
         
-        if (b.target == undefined) {
-            b.target = target;
-        } else if (p5.Vector.dist(b.target, b.location) < 1 + b.r * 2) {
-            b.target = target;
+        // if (b.boss == undefined) {
+        //     if (foods.length > 0) {
+        //         b.target = foods[ceil(random(0, foods.length-1))].location;
+        //     } else {
+        //         b.target = createVector(random(0, width),random(0, height));
+        //     }
+        // } else {
+        //     if (b.boss.target != undefined) {
+        //         b.target = b.boss.target;
+        //     } else {
+        //         b.target = createVector(random(0, width),random(0, height));
+        //     }
+        // }
+
+        if (b.target == undefined || p5.Vector.dist(b.target, b.location) < 1 + b.r * 2) {
+
+            if (foods.length > 0) {
+                b.target = foods[ceil(random(0, foods.length-1))].location
+            } else {
+                b.target = randomTarget[ceil(random(0, randomTarget.length-1))];
+            }
         }
 
-        b.addAccelaration(p5.Vector.sub(b.target, b.location), 0.8);
+        if (b.target) {
+            b.addAccelaration(p5.Vector.sub(b.target, b.location), 0.8);
+        }
 
         if(b.location.x > config.canvasSize.x) {
             b.location.x = config.canvasSize.x;
@@ -212,5 +260,9 @@ function draw() {
             f.render();
         }
     }
+
+    this.gradation(197, 100, 40, 17);
+    this.gradation(197, 100, 30, 12);
+    this.gradation(197, 100, 20, 5);
 
 }

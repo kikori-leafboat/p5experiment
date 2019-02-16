@@ -28,6 +28,8 @@ class Boid {
         } else {
             this.color = createVector(197, 10, 97);
         }
+
+        this.boss = undefined;
     }
 
     addAccelaration(velocity, weight = 1) {
