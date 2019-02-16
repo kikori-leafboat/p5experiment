@@ -47,8 +47,8 @@ let config = {
         alignmentDampingNum: 8,
         movementWeight: {
             alignment: 0.7,
-            seperation: 1,
-            cohesion: 0.8,
+            seperation: 0.95,
+            cohesion: 0.9,
             disire: 0.9
         },
         size: {
