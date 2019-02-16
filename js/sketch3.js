@@ -35,8 +35,8 @@ let config = {
             disire: 0.9
         },
         size: {
-            min: 5,
-            max: 20
+            min: 20,
+            max: 30
         },
         accelaration: {
             min: 2,

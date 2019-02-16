@@ -47,14 +47,14 @@ class Boid {
             config.boid.size.min, config.boid.size.max,
             config.boid.accelaration.max, config.boid.accelaration.min));
 
-        this.accelaration.limit(this.accelarationLimit + randomAccelaration);
+        this.accelaration.limit(this.accelarationLimit + randomAccelaration + map(this.z, -100, +100, 3, -3));
         this.location.add(this.accelaration);
-        this.z += sin(frameCount - noise(this.location.x, this.location.y)) + random(-1, 1) * noise(this.location.x, this.location.y) * 100;
+        this.z += sin(frameCount - noise(this.location.x, this.location.y)) + random(-1, 1) * noise(this.location.x, this.location.y);
     }
 
     render() {
         textSize(this.size - this.z/10);
-        fill(this.color.x, this.color.y - this.z, this.color.z - this.z);
+        fill(this.color.x, this.color.y, this.color.z - this.z);
         noStroke();
         //let radian = -atan2(location.x - trianglePosition.x, location.y - trianglePosition.y)
         // let radian = -atan2(location.x - trianglePosition.x, location.y - trianglePosition.y)
