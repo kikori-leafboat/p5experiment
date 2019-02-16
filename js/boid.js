@@ -13,6 +13,7 @@ class Food {
 class Boid {
     constructor(x, y, size) {
         this.location = createVector(x, y);
+        this.z = random(0, 50);
         this.accelaration = createVector(x, y);
         this.angle = 0;
         if (size) {
@@ -28,7 +29,6 @@ class Boid {
         } else {
             this.color = createVector(197, 10, 97);
         }
-
         this.boss = undefined;
     }
 
@@ -49,12 +49,12 @@ class Boid {
 
         this.accelaration.limit(this.accelarationLimit + randomAccelaration);
         this.location.add(this.accelaration);
-
+        this.z += sin(frameCount - noise(this.location.x, this.location.y)) + random(-1, 1) * noise(this.location.x, this.location.y) * 100;
     }
 
     render() {
-        textSize(this.size);
-        fill(this.color.x, this.color.y, this.color.z);
+        textSize(this.size - this.z/10);
+        fill(this.color.x, this.color.y - this.z, this.color.z - this.z);
         noStroke();
         //let radian = -atan2(location.x - trianglePosition.x, location.y - trianglePosition.y)
         // let radian = -atan2(location.x - trianglePosition.x, location.y - trianglePosition.y)

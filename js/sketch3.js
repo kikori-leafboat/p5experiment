@@ -147,7 +147,7 @@ function initializeQuadTree() {
     qtree = new QuadTree(boundary, 4);
 }
 
-function gradation(h, s, b, size) {
+function renderGradationFrame(h, s, b, size) {
     fill(h, s, b, 0.3);
     rect(0, 0, width, size);
     rect(0, height - size, width, size);
@@ -182,20 +182,6 @@ function draw() {
         b.addAccelaration(this.alignment(b), config.boid.movementWeight.alignment);
         b.addAccelaration(this.seperation(b), config.boid.movementWeight.seperation);
         b.addAccelaration(this.cohesion(b), config.boid.movementWeight.cohesion);
-        
-        // if (b.boss == undefined) {
-        //     if (foods.length > 0) {
-        //         b.target = foods[ceil(random(0, foods.length-1))].location;
-        //     } else {
-        //         b.target = createVector(random(0, width),random(0, height));
-        //     }
-        // } else {
-        //     if (b.boss.target != undefined) {
-        //         b.target = b.boss.target;
-        //     } else {
-        //         b.target = createVector(random(0, width),random(0, height));
-        //     }
-        // }
 
         if (b.target == undefined || p5.Vector.dist(b.target, b.location) < 1 + b.r * 2) {
 
@@ -261,8 +247,8 @@ function draw() {
         }
     }
 
-    this.gradation(197, 100, 40, 17);
-    this.gradation(197, 100, 30, 12);
-    this.gradation(197, 100, 20, 5);
+    this.renderGradationFrame(197, 100, 40, 17);
+    this.renderGradationFrame(197, 100, 30, 12);
+    this.renderGradationFrame(197, 100, 20, 5);
 
 }
